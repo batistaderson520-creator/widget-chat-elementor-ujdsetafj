@@ -63,4 +63,3 @@ export async function getAllMessages(): Promise<ChatMessage[]> {
     return []
   }
 }
-健全
