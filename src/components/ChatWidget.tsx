@@ -13,7 +13,7 @@ interface LocalMessage {
 }
 
 export function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true)
   const [config, setConfig] = useState<WidgetConfig | null>(null)
   const [messages, setMessages] = useState<LocalMessage[]>([])
   const [inputValue, setInputValue] = useState('')
@@ -22,6 +22,7 @@ export function ChatWidget() {
   const [sessionId, setSessionId] = useState('')
   const [wiggling, setWiggling] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     let sid = localStorage.getItem('chat_session_id')
@@ -66,6 +67,13 @@ export function ChatWidget() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
+
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => inputRef.current?.focus(), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
 
   const toggleOpen = () => {
     if (!isOpen) setUnreadCount(0)
@@ -242,6 +250,7 @@ export function ChatWidget() {
 
           <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2">
             <Input
+              ref={inputRef}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
